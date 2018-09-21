@@ -1,5 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
 
@@ -9,9 +8,6 @@ UOpenDoor::UOpenDoor()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-
-
 	// ...
 }
 
@@ -20,24 +16,6 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AActor* Owner = GetOwner();
-
-	FRotator NewRotation = FRotator(0.0f,90.0f,0.0f);
-
-	Owner->SetActorRotation(NewRotation);
-
-	
-
-	//DoorObject = GetOwner()->GetActorTransform()->SetRotation();
-
-	//DoorObject->AddRelativeRotation(0, 0, 90,0);
-		
-		//GetRootComponent()->
-
-		//or GetActorTransform()
-	// ...
-	
 }
 
 
@@ -45,7 +23,17 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// Poll trigger volume to have the actor that opens the door in the volume
 
-	// ...
+	if (PressurePlate->IsOverlappingActor(OpeningActor))
+	{
+		OpenDoor();
+	}
 }
 
+void UOpenDoor::OpenDoor()
+{
+	AActor* Owner = GetOwner();
+	FRotator NewRotation = FRotator(0.0f, 0.0f, 0.0f);
+	Owner->SetActorRotation(NewRotation);
+}
