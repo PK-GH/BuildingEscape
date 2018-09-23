@@ -28,12 +28,21 @@ void UOpenDoor2::BeginPlay()
 void UOpenDoor2::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	float delay = 0.73f;
+	float CurrentTime;
 
-	if (PressurePlate->IsOverlappingActor(OpeningActor))
+	if(PressurePlate->IsOverlappingActor(OpeningActor))
 	{
 		OpenDoor2();
+		SetTripTime();
 	}
-	// ...
+
+	CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if(CurrentTime > (GetTripTime() + delay))
+	{
+		CloseDoor2();
+	}
 }
 void UOpenDoor2::OpenDoor2()
 {
@@ -41,4 +50,17 @@ void UOpenDoor2::OpenDoor2()
 	FRotator NewRotation = FRotator(0.0f, 0.0f, 0.0f);
 	Owner->SetActorRotation(NewRotation);
 }
-
+void UOpenDoor2::CloseDoor2()
+{
+	AActor* Owner = GetOwner();
+	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
+	Owner->SetActorRotation(NewRotation);
+}
+void UOpenDoor2::SetTripTime()
+{
+	TripTime = GetWorld()->GetTimeSeconds();
+}
+float UOpenDoor2::GetTripTime()
+{
+	return TripTime;
+}

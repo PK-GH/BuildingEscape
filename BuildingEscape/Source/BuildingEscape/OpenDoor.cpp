@@ -25,17 +25,39 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	// Poll trigger volume to have the actor that opens the door in the volume
+	float delay = 0.49f;
+	float CurrentTime;
 
-	if (PressurePlate->IsOverlappingActor(OpeningActor))
+	if(PressurePlate->IsOverlappingActor(OpeningActor))
 	{
 		OpenDoor();
+		SetTripTime();
+	}
+
+	CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if(CurrentTime > (GetTripTime() + delay))
+	{
+		CloseDoor();
 	}
 }
-
 void UOpenDoor::OpenDoor()
 {
 	AActor* Owner = GetOwner();
 	FRotator NewRotation = FRotator(0.0f, 0.0f, 0.0f);
 	Owner->SetActorRotation(NewRotation);
+}
+void UOpenDoor::CloseDoor()
+{
+	AActor* Owner = GetOwner();
+	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
+	Owner->SetActorRotation(NewRotation);
+}
+void UOpenDoor::SetTripTime()
+{
+	TripTime = GetWorld()->GetTimeSeconds();
+}
+float UOpenDoor::GetTripTime()
+{
+	return TripTime;
 }
