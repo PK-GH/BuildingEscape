@@ -53,7 +53,7 @@ void UOpenDoor2::OpenDoor2()
 void UOpenDoor2::CloseDoor2()
 {
 	AActor* Owner = GetOwner();
-	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
+	FRotator NewRotation = FRotator(0.0f, CloseAngle, 0.0f);
 	Owner->SetActorRotation(NewRotation);
 }
 void UOpenDoor2::SetTripTime()
