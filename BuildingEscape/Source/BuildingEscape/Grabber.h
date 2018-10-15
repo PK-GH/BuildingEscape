@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "Grabber.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BUILDINGESCAPE_API UGrabber : public UActorComponent
@@ -27,8 +28,19 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Ray cast and grab what's in reach
+	virtual void Grab();
+	virtual void Release();
+	//make getters for the Physics handle and inputcomponent
+	virtual void FindPhysicsHandle();
+	virtual void SetupInputComponent();
+
+	const FHitResult GetFirstPhysicsBodyInReach();
+
 private:
 
 	float Reach = 100.0f;
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	
+	UInputComponent* InputComponent = nullptr;
 };
