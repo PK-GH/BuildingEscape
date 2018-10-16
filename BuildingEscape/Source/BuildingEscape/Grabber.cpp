@@ -31,8 +31,22 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation,
+		OUT PlayerViewPointRotation
+	);
+
+	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
+
 	//Get player view point for this tick
-	
+	if (PhysicsHandle->GrabbedComponent)
+	{
+		//move object we're holding
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 }
 void UGrabber::Grab()
 {
@@ -41,7 +55,21 @@ void UGrabber::Grab()
 	//reach actors, with physics body collision channel set
 	//hitting something triggers the physics handle
 	// TODO: attach physics handle
-	GetFirstPhysicsBodyInReach();
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();
+	if (ActorHit)
+	{
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(),
+			true //allows rotations of bodies
+		);
+	}
+
+	//need to do GrabComponent, then every frame, SetTargetLocation to update
+
+	//when we release the grab key, we use ReleaseComponent()
+
 }
 void UGrabber::Release()
 {
@@ -81,18 +109,18 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 
-	FString ViewLoc;
-	FString ViewRot;
-
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
 		OUT PlayerViewPointLocation,
 		OUT PlayerViewPointRotation
 	);
 
+	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
+
+	FString ViewLoc;
+	FString ViewRot;
+
 	ViewLoc = PlayerViewPointLocation.ToString();
 	ViewRot = PlayerViewPointRotation.ToString();
-
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
 
 	// UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), *ViewLoc, *ViewRot);
 	// DrawDebugLine(GetWorld(), PlayerViewPointLocation, LineTraceEnd, FColor(255, 0, 0), false, 0.f, 0.f, 10.f);
@@ -117,5 +145,5 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		UE_LOG(LogTemp, Warning, TEXT("In contact with: %s"), *(ActorHit->GetName()))
 	}
 
-	return FHitResult();
+	return Hit;
 }
