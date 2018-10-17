@@ -74,7 +74,8 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab Released"))
-	// TODO: release physics handle
+
+	PhysicsHandle->ReleaseComponent();
 }
 void UGrabber::FindPhysicsHandle()
 {
