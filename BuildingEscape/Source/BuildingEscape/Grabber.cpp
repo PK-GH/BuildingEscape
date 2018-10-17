@@ -31,16 +31,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FVector PlayerViewPointLocation;
-	FRotator PlayerViewPointRotation;
-
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT PlayerViewPointLocation,
-		OUT PlayerViewPointRotation
-	);
-
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
-
+	auto LineTraceEnd = GetLineTraceEnd();
 	//Get player view point for this tick
 	if (PhysicsHandle->GrabbedComponent)
 	{
@@ -48,6 +39,17 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		PhysicsHandle->SetTargetLocation(LineTraceEnd);
 	}
 }
+
+FVector UGrabber::GetLineTraceEnd()
+{
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation,
+		OUT PlayerViewPointRotation
+	);
+	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
+	return LineTraceEnd;
+}
+
 void UGrabber::Grab()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab Pressed"))
@@ -107,21 +109,10 @@ void UGrabber::SetupInputComponent()
 }
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	FVector PlayerViewPointLocation;
-	FRotator PlayerViewPointRotation;
+	auto LineTraceEnd = GetLineTraceEnd();
 
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT PlayerViewPointLocation,
-		OUT PlayerViewPointRotation
-	);
-
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector()*Reach;
-
-	FString ViewLoc;
-	FString ViewRot;
-
-	ViewLoc = PlayerViewPointLocation.ToString();
-	ViewRot = PlayerViewPointRotation.ToString();
+	FString ViewLoc = PlayerViewPointLocation.ToString();
+	FString ViewRot = PlayerViewPointRotation.ToString();
 
 	// UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), *ViewLoc, *ViewRot);
 	// DrawDebugLine(GetWorld(), PlayerViewPointLocation, LineTraceEnd, FColor(255, 0, 0), false, 0.f, 0.f, 10.f);
