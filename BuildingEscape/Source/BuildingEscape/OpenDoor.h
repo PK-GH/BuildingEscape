@@ -26,6 +26,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	int GetTotalMassActorsOnPlate();
 	virtual void OpenDoor();
 	virtual void CloseDoor();
 	void SetTripTime();

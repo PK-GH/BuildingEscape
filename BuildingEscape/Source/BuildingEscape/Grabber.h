@@ -28,6 +28,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	FVector GetLineTraceEnd();
+
 	// Ray cast and grab what's in reach
 	virtual void Grab();
 	virtual void Release();
@@ -36,11 +38,15 @@ public:
 	virtual void SetupInputComponent();
 
 	const FHitResult GetFirstPhysicsBodyInReach();
+	
 
 private:
 
 	float Reach = 100.0f;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
-	
+		
 	UInputComponent* InputComponent = nullptr;
+
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
 };
