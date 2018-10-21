@@ -30,7 +30,7 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	if (!PhysicsHandle) { return; }
 	//Get player view point for this tick
 	if (PhysicsHandle->GrabbedComponent)
 	{
@@ -60,6 +60,7 @@ void UGrabber::Grab()
 	auto ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
+		if (!PhysicsHandle) { return; }
 		PhysicsHandle->GrabComponent(
 			ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(),
 			true //allows rotations of bodies
@@ -74,7 +75,7 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab Released"))
-
+	if (!PhysicsHandle) { return; }
 	PhysicsHandle->ReleaseComponent();
 }
 void UGrabber::FindPhysicsHandle()

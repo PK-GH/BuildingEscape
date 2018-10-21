@@ -35,8 +35,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float CloseAngle = 90.0f;
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
+	ATriggerVolume* PressurePlate = nullptr;
 	
-	AActor* OpeningActor;
+	AActor* OpeningActor = nullptr;
 	float TripTime;
 };
